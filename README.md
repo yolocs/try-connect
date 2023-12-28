@@ -10,3 +10,7 @@
 2. Adding server/client is simple enough. The interface seems well defined.
    Deployed the server to Cloud Run (needs to set port protocol to be `h2c`
    since we used `h2c` server)
+
+3. Using the Connect client is probably the easier. Using gRPC client is the
+   same, which requires dialing the connection first. Using HTTP is probably the
+   most troublesome one because 1) there is no strong type 2) need to use http2.
