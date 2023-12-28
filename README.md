@@ -1,5 +1,32 @@
 # try-connect
 
+## Try things
+
+Deploy the server:
+
+```sh
+gcloud run deploy --use-http2 --image=$(ko build ./server)
+```
+
+Try clients:
+
+```sh
+# Try using Connect client
+go run client/main.go \
+  -address=[YOUR_CLOUD_RUN_URL] \
+  -token=$(gcloud auth print-identity-token) -protocol=connect
+
+# Try using HTTP client
+go run client/main.go \
+  -address=[YOUR_CLOUD_RUN_URL] \
+  -token=$(gcloud auth print-identity-token) -protocol=h2
+
+# Try using gRPC client
+go run client/main.go \
+  -address=[YOUR_CLOUD_RUN_URL] \
+  -token=$(gcloud auth print-identity-token) -protocol=grpc
+```
+
 ## Learnings
 
 1. Running `buf lint` shows it has strict requirements on
