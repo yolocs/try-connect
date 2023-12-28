@@ -8,3 +8,5 @@
    - Service proto must be suffixed with "Service"
 
 2. Adding server/client is simple enough. The interface seems well defined.
+   Deployed the server to Cloud Run (needs to set port protocol to be `h2c`
+   since we used `h2c` server)
