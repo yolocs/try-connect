@@ -6,3 +6,9 @@ plugins:
   - plugin: connect-go
     out: gen
     opt: paths=source_relative
+  # Not strictly needed but wanted to test using native gRPC client
+  # to call Connect server.
+  - plugin: buf.build/grpc/go:v1.3.0
+    out: gen
+    opt:
+      - paths=source_relative
