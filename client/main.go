@@ -55,6 +55,9 @@ func viaHTTP(ctx context.Context) error {
 	addr := strings.TrimPrefix(*address, "https://")
 	addr = addr + ":443"
 
+	// Not implemented here but to do it without TLS, we can directly use
+	// net.Dial instead of tls.Dial.
+	// See: https://connectrpc.com/docs/go/deployment#h2c
 	conf := &tls.Config{
 		NextProtos: []string{"h2"},
 		MinVersion: tls.VersionTLS12,
@@ -118,6 +121,9 @@ func viaGRPC(ctx context.Context) error {
 	// expected url format: my-example-server.a.run.app:443
 	addr := strings.TrimPrefix(*address, "https://")
 	addr = addr + ":443"
+
+	// Not implemented here but to do it without TLS, we need to use
+	// grpc.WithTransportCredentials(insecure.NewCredentials()).
 	conn, err := grpc.DialContext(ctx, addr, grpc.WithPerRPCCredentials(rpcCreds), grpc.WithTransportCredentials(creds))
 	if err != nil {
 		return fmt.Errorf("failed to dial: %w", err)
