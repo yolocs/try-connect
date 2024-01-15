@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"strings"
 
-	"connectrpc.com/connect"
+	connect "github.com/bufbuild/connect-go"
 	talkerv1 "github.com/yolocs/try-connect/gen/talker/v1"
 	"github.com/yolocs/try-connect/gen/talker/v1/talkerv1connect"
 	"golang.org/x/net/http2"
