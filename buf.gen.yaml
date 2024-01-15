@@ -1,9 +1,9 @@
 version: v1
 plugins:
-  - plugin: go
+  - plugin: buf.build/protocolbuffers/go
     out: gen
     opt: paths=source_relative
-  - plugin: connect-go
+  - plugin: buf.build/bufbuild/connect-go
     out: gen
     opt: paths=source_relative
   # Not strictly needed but wanted to test using native gRPC client

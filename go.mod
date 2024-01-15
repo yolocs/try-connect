@@ -5,6 +5,7 @@ go 1.21
 require (
 	connectrpc.com/connect v1.14.0
 	github.com/abcxyz/pkg v0.7.3-0.20231219194248-00353d11b493
+	github.com/bufbuild/connect-go v1.10.0
 	golang.org/x/net v0.17.0
 	golang.org/x/oauth2 v0.13.0
 	google.golang.org/grpc v1.60.1

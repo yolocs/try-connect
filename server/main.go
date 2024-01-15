@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"connectrpc.com/connect"
+	connect "github.com/bufbuild/connect-go"
 	talkerv1 "github.com/yolocs/try-connect/gen/talker/v1"
 	"github.com/yolocs/try-connect/gen/talker/v1/talkerv1connect"
 	"golang.org/x/net/http2"
@@ -55,8 +55,12 @@ type TalkerServer struct{}
 
 func (s *TalkerServer) Hello(ctx context.Context, req *connect.Request[talkerv1.HelloRequest]) (*connect.Response[talkerv1.HelloResponse], error) {
 	log.Println("Request headers: ", req.Header())
+	msg := fmt.Sprintf("Hello, %s!", req.Msg.Target)
+	if req.Msg.Bar != nil {
+		msg = msg + fmt.Sprintf(" Optional number: %d", req.Msg.GetBar())
+	}
 	res := connect.NewResponse(&talkerv1.HelloResponse{
-		Message: fmt.Sprintf("Hello, %s!", req.Msg.Target),
+		Message: msg,
 	})
 	res.Header().Set("Talker-Version", "v1")
 	return res, nil

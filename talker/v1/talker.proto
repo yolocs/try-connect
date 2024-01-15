@@ -28,6 +28,9 @@ service TalkerService {
 message HelloRequest {
   string target = 1;
   string message = 2;
+
+  optional string foo = 3;
+  optional int32 bar = 4;
 }
 
 message HelloResponse {
