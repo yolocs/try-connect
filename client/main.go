@@ -20,6 +20,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/oauth"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -77,7 +78,7 @@ func viaHTTP(ctx context.Context) error {
 		ctx,
 		http.MethodPost,
 		*address+"/talker.v1.TalkerService/Hello",
-		bytes.NewBufferString(`{"target":"`+*target+`"}`),
+		bytes.NewBufferString(`{"target":"`+*target+`","bar": 123}`),
 	)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
@@ -131,7 +132,7 @@ func viaGRPC(ctx context.Context) error {
 	defer conn.Close()
 
 	client := talkerv1.NewTalkerServiceClient(conn)
-	res, err := client.Hello(ctx, &talkerv1.HelloRequest{Target: *target})
+	res, err := client.Hello(ctx, &talkerv1.HelloRequest{Target: *target, Bar: proto.Int32(123)})
 	if err != nil {
 		return fmt.Errorf("failed to say hello: %w", err)
 	}
@@ -147,7 +148,7 @@ func viaConnect(ctx context.Context) error {
 		*address,
 	)
 
-	req := connect.NewRequest(&talkerv1.HelloRequest{Target: *target})
+	req := connect.NewRequest(&talkerv1.HelloRequest{Target: *target, Bar: proto.Int32(123)})
 	// This is how I authenticate. I don't need to worry about the SSL cert.
 	if *token != "" {
 		req.Header().Set("Authorization", "Bearer "+*token)
