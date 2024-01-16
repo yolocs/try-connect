@@ -14,6 +14,7 @@ import (
 	"github.com/yolocs/try-connect/gen/talker/v1/talkerv1connect"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/abcxyz/pkg/serving"
 )
@@ -59,9 +60,15 @@ func (s *TalkerServer) Hello(ctx context.Context, req *connect.Request[talkerv1.
 	if req.Msg.Bar != nil {
 		msg = msg + fmt.Sprintf(" Optional number: %d", req.Msg.GetBar())
 	}
-	res := connect.NewResponse(&talkerv1.HelloResponse{
+	resp := &talkerv1.HelloResponse{
 		Message: msg,
-	})
+	}
+	if req.Msg.Foo != nil {
+		resp.EmbeddedThing = &talkerv1.EmbeddedThing{
+			InternalMessage: proto.String(req.Msg.GetFoo()),
+		}
+	}
+	res := connect.NewResponse(resp)
 	res.Header().Set("Talker-Version", "v1")
 	return res, nil
 }

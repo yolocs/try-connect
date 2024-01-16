@@ -137,6 +137,10 @@ func viaGRPC(ctx context.Context) error {
 		return fmt.Errorf("failed to say hello: %w", err)
 	}
 
+	if res.EmbeddedThing != nil {
+		log.Println("WRONG! Not expecting the EmbeddedThing")
+	}
+
 	log.Println("Can't print header in gRPC mode")
 	log.Println(res.Message)
 	return nil
@@ -161,6 +165,11 @@ func viaConnect(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("connect request: %w", err)
 	}
+
+	if res.Msg.EmbeddedThing != nil {
+		log.Println("WRONG! Not expecting the EmbeddedThing")
+	}
+
 	log.Println(req.Header())
 	log.Println(res.Msg.Message)
 	return nil
