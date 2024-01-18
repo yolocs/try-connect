@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	connect "github.com/bufbuild/connect-go"
+	connect "connectrpc.com/connect"
 	talkerv1 "github.com/yolocs/try-connect/gen/talker/v1"
 	"github.com/yolocs/try-connect/gen/talker/v1/talkerv1connect"
 	"golang.org/x/net/http2"

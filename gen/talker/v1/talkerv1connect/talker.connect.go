@@ -5,9 +5,9 @@
 package talkerv1connect
 
 import (
+	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	connect_go "github.com/bufbuild/connect-go"
 	v1 "github.com/yolocs/try-connect/gen/talker/v1"
 	http "net/http"
 	strings "strings"
@@ -18,7 +18,7 @@ import (
 // generated with a version of connect newer than the one compiled into your binary. You can fix the
 // problem by either regenerating this code with an older version of connect or updating the connect
 // version compiled into your binary.
-const _ = connect_go.IsAtLeastVersion0_1_0
+const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// TalkerServiceName is the fully-qualified name of the TalkerService service.
@@ -37,10 +37,16 @@ const (
 	TalkerServiceHelloProcedure = "/talker.v1.TalkerService/Hello"
 )
 
+// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
+var (
+	talkerServiceServiceDescriptor     = v1.File_talker_v1_talker_proto.Services().ByName("TalkerService")
+	talkerServiceHelloMethodDescriptor = talkerServiceServiceDescriptor.Methods().ByName("Hello")
+)
+
 // TalkerServiceClient is a client for the talker.v1.TalkerService service.
 type TalkerServiceClient interface {
 	// Say hello with something OK to audit log in request/response.
-	Hello(context.Context, *connect_go.Request[v1.HelloRequest]) (*connect_go.Response[v1.HelloResponse], error)
+	Hello(context.Context, *connect.Request[v1.HelloRequest]) (*connect.Response[v1.HelloResponse], error)
 }
 
 // NewTalkerServiceClient constructs a client for the talker.v1.TalkerService service. By default,
@@ -50,31 +56,32 @@ type TalkerServiceClient interface {
 //
 // The URL supplied here should be the base URL for the Connect or gRPC server (for example,
 // http://api.acme.com or https://acme.com/grpc).
-func NewTalkerServiceClient(httpClient connect_go.HTTPClient, baseURL string, opts ...connect_go.ClientOption) TalkerServiceClient {
+func NewTalkerServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) TalkerServiceClient {
 	baseURL = strings.TrimRight(baseURL, "/")
 	return &talkerServiceClient{
-		hello: connect_go.NewClient[v1.HelloRequest, v1.HelloResponse](
+		hello: connect.NewClient[v1.HelloRequest, v1.HelloResponse](
 			httpClient,
 			baseURL+TalkerServiceHelloProcedure,
-			opts...,
+			connect.WithSchema(talkerServiceHelloMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
 	}
 }
 
 // talkerServiceClient implements TalkerServiceClient.
 type talkerServiceClient struct {
-	hello *connect_go.Client[v1.HelloRequest, v1.HelloResponse]
+	hello *connect.Client[v1.HelloRequest, v1.HelloResponse]
 }
 
 // Hello calls talker.v1.TalkerService.Hello.
-func (c *talkerServiceClient) Hello(ctx context.Context, req *connect_go.Request[v1.HelloRequest]) (*connect_go.Response[v1.HelloResponse], error) {
+func (c *talkerServiceClient) Hello(ctx context.Context, req *connect.Request[v1.HelloRequest]) (*connect.Response[v1.HelloResponse], error) {
 	return c.hello.CallUnary(ctx, req)
 }
 
 // TalkerServiceHandler is an implementation of the talker.v1.TalkerService service.
 type TalkerServiceHandler interface {
 	// Say hello with something OK to audit log in request/response.
-	Hello(context.Context, *connect_go.Request[v1.HelloRequest]) (*connect_go.Response[v1.HelloResponse], error)
+	Hello(context.Context, *connect.Request[v1.HelloRequest]) (*connect.Response[v1.HelloResponse], error)
 }
 
 // NewTalkerServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -82,11 +89,12 @@ type TalkerServiceHandler interface {
 //
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
-func NewTalkerServiceHandler(svc TalkerServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	talkerServiceHelloHandler := connect_go.NewUnaryHandler(
+func NewTalkerServiceHandler(svc TalkerServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
+	talkerServiceHelloHandler := connect.NewUnaryHandler(
 		TalkerServiceHelloProcedure,
 		svc.Hello,
-		opts...,
+		connect.WithSchema(talkerServiceHelloMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
 	return "/talker.v1.TalkerService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -101,6 +109,6 @@ func NewTalkerServiceHandler(svc TalkerServiceHandler, opts ...connect_go.Handle
 // UnimplementedTalkerServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedTalkerServiceHandler struct{}
 
-func (UnimplementedTalkerServiceHandler) Hello(context.Context, *connect_go.Request[v1.HelloRequest]) (*connect_go.Response[v1.HelloResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("talker.v1.TalkerService.Hello is not implemented"))
+func (UnimplementedTalkerServiceHandler) Hello(context.Context, *connect.Request[v1.HelloRequest]) (*connect.Response[v1.HelloResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("talker.v1.TalkerService.Hello is not implemented"))
 }
